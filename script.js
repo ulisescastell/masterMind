@@ -23,6 +23,7 @@ function init() {
 
 }
 
+//
 function generarArrayMaster() {
     for (i = 0; i < 4; i++) {
         const random = Math.floor(Math.random()*(COLORS.length-1))
@@ -30,6 +31,15 @@ function generarArrayMaster() {
     }
     return master
 }
+
+function actualizarCeldasUsuario() {
+    const filaActual = `fila${intento+1}`; // Asume que `intento` es la intentona actual
+    for (let i = 0; i < userCombi.length; i++) {
+        const cuadrado = document.getElementById(`${filaActual}cuadrado${i+1}`);
+        if (cuadrado) cuadrado.style.backgroundColor = userCombi[i];
+    }
+}
+
 
 function crearResult(pMaster, pUser) {
     let colorMaster
@@ -59,30 +69,51 @@ Informamos al usuario del resultado y del número de intentos que lleva*/
 function Comprobar() {
     if (userCombi.length === 4) {
         for (let i=0; i<4; i++) {
-            let cuadrado = document.getElementById(`fila1cuadrado${i+1}`)
+            let cuadrado = document.getElementById(`fila${intento+1}cuadrado${i+1}`)
             cuadrado.style.backgroundColor = userCombi[i]
         }
         crearResult(master, userCombi)
-        console.log(result)
         for (let i=0; i<4; i++) {
-            let circulo = document.getElementById(`fila1circulo${i+1}`)
-            console.log("ITERACIÓN", i, circulo)
+            let circulo = document.getElementById(`fila${intento+1}circulo${i+1}`)
             circulo.style.backgroundColor = result[i]
         }
+        let todosOk = result.every(elmento => elmento == "black")
+        if (todosOk) {
+            ganar()
+        }
+        intento++
+        actualizarMensajeIntento()
+        reiniciarCombinacionUsuario()
     }
     else {
         alert("No hay suficientes colores para comprobar, inténtelo de nuevo!")
     }
+    
 }
 
 /** Procedimiento que se ejecuta cada vez que el usuario selecciona un color, hasta el número máximo de colores permitidos en la combinación. */
 function añadeColor(color) {
     if (userCombi.length < 4) {
-        userCombi.push(color);
-        document.getElementById("combiText").value = userCombi.join("+"); //LO HE USADO PARA VISUALMENTE MOSTRAR QUE SE SUMAN (realmente el .join es opcional)
+        userCombi.push(color)
+        document.getElementById("combiText").value = userCombi.join("+"); //LO HE USADO PARA VISUALMENTE MOSTRAR QUE SE SUMAN (realmente el .join es opcional) m.
     } else {
         alert("Máximo de 4 colores alcanzado");
     }
+}
+
+function actualizarMensajeIntento() {
+    let info = document.getElementById("info")
+    info.innerText = `Intento ${intento + 1}, suerte!`
+}
+
+function reiniciarCombinacionUsuario() {
+    userCombi = []
+    result = []
+    document.getElementById("combiText").value = ""
+}
+
+function ganar() {
+    alert("Has ganado!, enorabuena!")
 }
 
 function crearIntentos(MAX_INTENTOS) {
